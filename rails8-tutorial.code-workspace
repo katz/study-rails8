@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "path": "store"
+        },
+        {
+            "path": ".",
+            "name": "rails8-tutorial-root"
+        }
+    ],
+    "settings": {
+        // Add your workspace settings here
+    }
+}

@@ -42,6 +42,7 @@
                         "shardulm94.trailing-spaces",
                         "ics.japanese-proofreading",
                         "redhat.vscode-yaml",
+                        "connorshea.vscode-ruby-test-adapter",
                 ]
             }
         }
