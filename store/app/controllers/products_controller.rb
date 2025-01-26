@@ -12,7 +12,7 @@ class ProductsController < ApplicationController
   def new
       @product = Product.new
   end
-  
+
   def create
     @product = Product.new(product_params)
     if @product.save
@@ -45,6 +45,6 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.expect(product: [:name, :description])
+    params.expect(product: [ :name, :description, :featured_image ])
   end
 end
