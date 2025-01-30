@@ -6,4 +6,6 @@ class Product < ApplicationRecord
   has_rich_text :description
   validates :name, presence: true
   validates :inventory_count, numericality: { greater_than_or_equal_to: 0 }
+
+  scope :in_stock, -> { where("inventory_count > 0") }
 end

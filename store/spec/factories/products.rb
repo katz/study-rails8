@@ -1,7 +1,15 @@
 FactoryBot.define do
   factory :product do
     name { Faker::Commerce.product_name }
-    inventory_count { 15 }
+    inventory_count { Faker::Number.within(range: 1..9999) }
+  end
+
+  trait :out_of_stock do
+    inventory_count { 0 }
+  end
+
+  trait :in_stock do
+    inventory_count { Faker::Number.within(range: 1..9999) }
   end
 
   trait :with_1_subscriber do
