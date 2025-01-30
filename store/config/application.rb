@@ -23,5 +23,8 @@ module Store
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Make sure no sensitive data is logged by accident in the access log, so only log controller and action:
+    config.logcraft.access_log.log_only_whitelisted_params = true
   end
 end
