@@ -42,7 +42,7 @@ RSpec.describe Product, type: :model do # Productモデルのテストコード�
       it "空配列を返すこと" do
         FactoryBot.create_list(:product, Faker::Number.within(range: 1..100), :out_of_stock)
 
-        expect(Product.in_stock).to eq([])
+        expect(Product.in_stock).to match_array([])
       end
     end
   end
