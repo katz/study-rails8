@@ -30,9 +30,9 @@ RSpec.describe Product, type: :model do # Productモデルのテストコード�
   describe ".in_stock" do
     context "在庫がある商品があるとき" do
       it "在庫がある商品のみを返すこと" do
-        in_stock_product_1 = FactoryBot.create(:product, inventory_count: 1)
-        in_stock_product_2 = FactoryBot.create(:product, inventory_count: 2)
-        out_of_stock_product = FactoryBot.create(:product, inventory_count: 0)
+        in_stock_product_1 = FactoryBot.create(:product, :in_stock)
+        in_stock_product_2 = FactoryBot.create(:product, :in_stock)
+        out_of_stock_product = FactoryBot.create(:product, :out_of_stock)
 
         expect(Product.in_stock).to contain_exactly(in_stock_product_1, in_stock_product_2)
       end
@@ -40,7 +40,7 @@ RSpec.describe Product, type: :model do # Productモデルのテストコード�
 
     context "どの商品も在庫なしの場合" do
       it "空配列を返すこと" do
-        FactoryBot.create(:product, inventory_count: 0)
+        FactoryBot.create(:product, :out_of_stock)
 
         expect(Product.in_stock).to eq([])
       end
