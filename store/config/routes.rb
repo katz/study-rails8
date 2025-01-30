@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
   resource :unsubscribe, only: [ :show ]
 
-  root "products#index"
+  get "status" => "status#index", defaults: { format: "json" }
 
+  root "products#index"
 end

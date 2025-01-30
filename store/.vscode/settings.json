@@ -1,4 +1,4 @@
 {
-    "rubyTestExplorer.testFramework": "minitest",
-    "rubyTestExplorer.minitestDirectory": "./test/",
+    "rubyTestExplorer.testFramework": "rspec",
+    "rubyTestExplorer.minitestDirectory": "./spec/",
 }
