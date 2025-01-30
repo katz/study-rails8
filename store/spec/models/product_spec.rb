@@ -26,4 +26,24 @@ RSpec.describe Product, type: :model do # Productモデルのテストコード�
       product.update(inventory_count: 99)
     end
   end
+
+  describe ".in_stock" do
+    context "在庫がある商品があるとき" do
+      it "在庫がある商品のみを返すこと" do
+        in_stock_product_1 = FactoryBot.create(:product, inventory_count: 1)
+        in_stock_product_2 = FactoryBot.create(:product, inventory_count: 2)
+        out_of_stock_product = FactoryBot.create(:product, inventory_count: 0)
+
+        expect(Product.in_stock).to contain_exactly(in_stock_product_1, in_stock_product_2)
+      end
+    end
+
+    context "どの商品も在庫なしの場合" do
+      it "空配列を返すこと" do
+        FactoryBot.create(:product, inventory_count: 0)
+
+        expect(Product.in_stock).to eq([])
+      end
+    end
+  end
 end
