@@ -6,13 +6,14 @@ RSpec.describe ProductMailer, type: :mailer do
   end
 
   it "in_stock" do
+    email = Faker::Internet.email
     product = FactoryBot.create(:product)
-    subscriber = FactoryBot.create(:subscriber, product: product, email: "hoge@example.com")
+    subscriber = FactoryBot.create(:subscriber, product: product, email: email)
 
     mail = ProductMailer.with(product: product, subscriber: subscriber).in_stock
 
     expect(mail.subject).to eq("In stock")
-    expect(mail.to).to eq([ "hoge@example.com" ])
+    expect(mail.to).to eq([ email ])
     expect(mail.from).to eq([ "from@example.com" ])
     expect(mail.body.encoded).to match("Good news!")
   end
