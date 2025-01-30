@@ -7,6 +7,16 @@ RSpec.describe Product, type: :model do # Productモデルのテストコード�
     expect(true).to eq(true)
   end
 
+  it "subscriberがいないときは、在庫が復活してもメールは送られないこと" do
+    product = FactoryBot.create(:product)
+
+    product.update(inventory_count: 0)
+
+    assert_emails 0 do
+      product.update(inventory_count: 99)
+    end
+  end
+
   it "sends email notifications when back in stock" do
     product = FactoryBot.create(:product, :with_2_subscribers)
 
