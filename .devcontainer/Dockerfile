@@ -16,6 +16,10 @@ RUN ARCH=$(uname -m) \
     && apt-get install -y /tmp/git-delta_latest_${DELTA_ARCH}.deb \
     && rm -f /tmp/git-delta_latest_${DELTA_ARCH}.deb
 
+# Install hadolint script
+COPY .devcontainer/hadolint.sh /usr/local/bin/hadolint
+RUN chmod +x /usr/local/bin/hadolint
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
