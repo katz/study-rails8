@@ -20,10 +20,7 @@ RUN ARCH=$(uname -m) \
 COPY .devcontainer/hadolint.sh /usr/local/bin/hadolint
 RUN chmod +x /usr/local/bin/hadolint
 
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN /home/linuxbrew/.linuxbrew/bin/brew install watchman
-RUN echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/vscode/.bash_profile
-RUN echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/vscode/.zprofile
+RUN apt update && apt install watchman -y
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
