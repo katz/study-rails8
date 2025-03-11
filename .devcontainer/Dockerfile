@@ -20,7 +20,9 @@ RUN ARCH=$(uname -m) \
 COPY .devcontainer/hadolint.sh /usr/local/bin/hadolint
 RUN chmod +x /usr/local/bin/hadolint
 
-RUN apt update && apt install watchman -y
+RUN apt-get update && apt-get install -y --no-install-recommends watchman \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
