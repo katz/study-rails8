@@ -8,6 +8,9 @@ RUN su vscode -c "/usr/local/rvm/bin/rvm fix-permissions"
 # The value is a comma-separated list of allowed domains
 ENV RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.preview.app.github.dev,.app.github.dev"
 
+# パイプで複数のコマンドを繋いでいるとき、いずれかのコマンドが失敗したらRUNが失敗した扱いにする
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Delta - A syntax-highlighting pager for git, diff, grep, and blame output をインストール
 RUN ARCH=$(uname -m) \
     && DELTA_ARCH=$(if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then echo "arm64"; else echo "amd64"; fi) \
