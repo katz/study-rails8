@@ -16,7 +16,7 @@ RUN ARCH=$(uname -m) \
     && DELTA_ARCH=$(if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then echo "arm64"; else echo "amd64"; fi) \
     && DELTA_VERSION=$(curl -sL "https://api.github.com/repos/dandavison/delta/releases/latest" | jq -r '.name') \
     && curl -o "/tmp/git-delta_latest_${DELTA_ARCH}.deb" -L "https://github.com/dandavison/delta/releases/download/${DELTA_VERSION}/git-delta_${DELTA_VERSION}_${DELTA_ARCH}.deb" \
-    && apt-get install -y "/tmp/git-delta_latest_${DELTA_ARCH}.deb" \
+    && apt-get install -y --no-install-recommends "/tmp/git-delta_latest_${DELTA_ARCH}.deb" \
     && rm -f "/tmp/git-delta_latest_${DELTA_ARCH}.deb"
 
 # Install hadolint script
