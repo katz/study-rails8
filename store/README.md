@@ -59,6 +59,19 @@ rails db:migrate
 bin/dev
 ```
 
+## Sorbetのセットアップ
+
+Sorbetの静的型チェックをするに当たっては追加の設定が必要な場合がある。
+以下2つのコマンドを必要に応じて実行し、DSLとGemに対する型情報ファイルを生成する。
+
+```bash
+bin/tapioca dsl
+bin/tapioca gems
+```
+
+Sorbetの`srb`コマンド自体が動かない等の場合、以下のURLを参考に必要なGemなどをインストールのこと。
+<https://sorbet.org/docs/adopting>
+
 ## デプロイ
 
 Dockerコンテナーとして、Kamalを使用してどこにでもデプロイ可能です。
