@@ -2,6 +2,27 @@
 module UserAuthByArgon2id
   extend ActiveSupport::Concern
 
+  class << self
+    attr_accessor :min_cost # :nodoc:
+
+    # Argon2idのコストパラメータを返す
+    #
+    # Argon2idのコストパラメータはOWASPのPassword cheat sheetに従った
+    # https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#argon2id
+    # なお、Argon2idはハッシュ算出時間が1秒未満だとbcryptよりも脆弱になるとのこと
+    # https://twitter.com/TerahashCorp/status/1155129705034653698
+    # https://github.com/rails/rails/issues/41420#issuecomment-1684120271
+    # そのため、コストパラメータはハッシュ算出時間が1秒以上になるように適宜調整が必要
+    def cost_params
+      if min_cost
+        { t_cost: 1, m_cost: 4, p_cost: 1 }
+      else
+        { t_cost: 2, m_cost: 19, p_cost: 1 }
+      end
+    end
+  end
+  self.min_cost = false
+
   module ClassMethods
     def has_secure_password_by_argon2id(attribute = :password, validations: true, reset_token: true)
       # Load bcrypt gem only when has_secure_password is used.
@@ -79,13 +100,7 @@ module UserAuthByArgon2id
           self.public_send("#{attribute}_digest=", nil)
         elsif !unencrypted_password.empty?
           instance_variable_set("@#{attribute}", unencrypted_password)
-          # Argon2idのコストパラメータはOWASPのPassword cheat sheetに従った
-          # https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#argon2id
-          # なお、Argon2idはハッシュ算出時間が1秒未満だとbcryptよりも脆弱になるとのこと
-          # https://twitter.com/TerahashCorp/status/1155129705034653698
-          # https://github.com/rails/rails/issues/41420#issuecomment-1684120271
-          # そのため、コストパラメータはハッシュ算出時間が1秒以上になるように適宜調整が必要
-          hasher = Argon2::Password.new(t_cost: 2, m_cost: 19, p_cost: 1)
+          hasher = Argon2::Password.new(**UserAuthByArgon2id.cost_params)
           password_digest = hasher.create(unencrypted_password)
           self.public_send("#{attribute}_digest=", password_digest)
         end
