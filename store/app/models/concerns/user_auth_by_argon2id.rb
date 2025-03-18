@@ -35,6 +35,13 @@ module UserAuthByArgon2id
         raise
       end
 
+      begin
+        require "bcrypt"
+      rescue LoadError
+        warn "You don't have bcrypt installed in your application. Please add it to your Gemfile and run bundle install."
+        raise
+      end
+
       include InstanceMethodsOnActivation.new(attribute, reset_token: reset_token)
 
       if validations
@@ -52,7 +59,14 @@ module UserAuthByArgon2id
           if challenge = record.public_send(:"#{attribute}_challenge")
             digest_was = record.public_send(:"#{attribute}_digest_was") if record.respond_to?(:"#{attribute}_digest_was")
 
-            unless digest_was.present? && Argon2::Password.verify_password(challenge, secure_password)
+            unless digest_was.present? && BCrypt::Password.new(digest_was).is_password?(challenge)
+              record.errors.add(:"#{attribute}_challenge")
+            end
+
+            if !digest_was.present? || (digest_was.start_with?("$2a$") && !BCrypt::Password.new(digest_was).is_password?(challenge))
+              record.errors.add(:"#{attribute}_challenge")
+            end
+            if !digest_was.present? || (digest_was.start_with?("$argon2id$") && !Argon2::Password.verify_password(challenge, digest_was))
               record.errors.add(:"#{attribute}_challenge")
             end
           end
@@ -121,7 +135,11 @@ module UserAuthByArgon2id
       define_method("authenticate_#{attribute}") do |unencrypted_password|
         attribute_digest = public_send("#{attribute}_digest")
         return false unless attribute_digest.present?
-        Argon2::Password.verify_password(unencrypted_password, attribute_digest) && self
+        if attribute_digest.start_with?("$argon2id$")
+          Argon2::Password.verify_password(unencrypted_password, attribute_digest) && self
+        else
+          BCrypt::Password.new(attribute_digest).is_password?(unencrypted_password) && self
+        end
       end
 
       # Returns the salt, a small chunk of random data added to the password before it's hashed.
