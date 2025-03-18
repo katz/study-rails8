@@ -15,7 +15,7 @@ module UserAuthByArgon2id
     # そのため、コストパラメータはハッシュ算出時間が1秒以上になるように適宜調整が必要
     def cost_params
       if min_cost
-        { t_cost: 1, m_cost: 4, p_cost: 1 }
+        { profile: :unsafe_cheapest }
       else
         { t_cost: 2, m_cost: 19, p_cost: 1 }
       end
