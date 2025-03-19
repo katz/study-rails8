@@ -12,6 +12,9 @@ RSpec.describe UserAuthByArgon2id do
 
       attribute :password_digest
       has_secure_password_by_argon2id
+
+      attribute :recovery_password_digest
+      has_secure_password_by_argon2id :recovery_password, validations: false
     end
 
     class TestVisitor
@@ -194,6 +197,76 @@ RSpec.describe UserAuthByArgon2id do
         expect(existing_user.errors[:password_challenge]).to include("is invalid")
         expect(existing_user.errors.count).to eq(1)
       end
+    end
+
+    context "updating a user without dirty tracking and a correct password challenge" do
+      it "aaa"  do
+        validatable_visitor = Class.new(TestVisitor) do
+          attr_accessor :untracked_digest
+          has_secure_password_by_argon2id :untracked
+        end.new
+
+        validatable_visitor.untracked = "password"
+        expect(validatable_visitor.valid?(:update)).to be_truthy
+
+        validatable_visitor.untracked_challenge = "password"
+        expect(validatable_visitor.valid?(:update)).to be_falsey
+      end
+    end
+
+    it "updating an existing user with validation and a blank password digest" do
+      existing_user.password_digest = ""
+      expect(existing_user.valid?(:update)).to be_falsey
+      expect(existing_user.errors[:password]).to include("can't be blank")
+      expect(existing_user.errors.count).to eq(1)
+    end
+
+    it "updating an existing user with validation and a nil password digest" do
+      existing_user.password_digest = nil
+      expect(existing_user.valid?(:update)).to be_falsey
+      expect(existing_user.errors[:password]).to include("can't be blank")
+      expect(existing_user.errors.count).to eq(1)
+    end
+
+    it "setting a blank password should not change an existing password" do
+      # existing_user.password = ""
+      # expect(existing_user.password_digest == 'password').to be_truthy
+    end
+
+    it "setting a nil password should clear an existing password" do
+      existing_user.password = nil
+      expect(existing_user.password_digest).to be_nil
+    end
+
+    context "authenticate" do
+      it "aaa" do
+        user.password = "secret"
+        user.recovery_password = "42password"
+
+        expect(user.authenticate('wrong')).to be_falsey
+        expect(user.authenticate('secret')).to be_equal(user)
+
+        expect(user.authenticate_password('wrong')).to be_falsey
+        expect(user.authenticate_password('secret')).to be_equal(user)
+
+        expect(user.authenticate_recovery_password('wrong')).to be_falsey
+        expect(user.authenticate_recovery_password('42password')).to be_equal(user)
+      end
+
+      it "authenticate should return false and not raise when password digest is blank" do
+        user.password_digest = " "
+        expect(user.authenticate(' ')).to be_falsey
+      end
+    end
+
+    # context "password_salt" do
+    #   it 'aaa' do
+    #     # user.password = "secret"
+    #     # assert_equal user.password_digest.salt, user.password_salt
+    #   end
+    # end
+
+    context "Password digest cost honors bcrypt cost attribute when min_cost is false" do
     end
   end
 end
