@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UserAuthByArgon2id do
   before do
-    UserAuthByArgon2id.min_cost = false
+    UserAuthByArgon2id.min_cost = true
 
     class TestUser
       extend ActiveModel::Callbacks
