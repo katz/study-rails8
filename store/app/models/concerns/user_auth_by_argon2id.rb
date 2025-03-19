@@ -59,14 +59,10 @@ module UserAuthByArgon2id
           if challenge = record.public_send(:"#{attribute}_challenge")
             digest_was = record.public_send(:"#{attribute}_digest_was") if record.respond_to?(:"#{attribute}_digest_was")
 
-            unless digest_was.present? && BCrypt::Password.new(digest_was).is_password?(challenge)
-              record.errors.add(:"#{attribute}_challenge")
-            end
-
-            if !digest_was.present? || (digest_was.start_with?("$2a$") && !BCrypt::Password.new(digest_was).is_password?(challenge))
-              record.errors.add(:"#{attribute}_challenge")
-            end
-            if !digest_was.present? || (digest_was.start_with?("$argon2id$") && !Argon2::Password.verify_password(challenge, digest_was))
+            unless digest_was.present? && (
+              (digest_was.start_with?("$argon2id$") && Argon2::Password.verify_password(challenge, digest_was)) ||
+              (digest_was.start_with?("$2a$") && BCrypt::Password.new(digest_was).is_password?(challenge))
+            )
               record.errors.add(:"#{attribute}_challenge")
             end
           end
